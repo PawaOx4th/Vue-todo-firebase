@@ -12,7 +12,7 @@ export default {
 
 <style lang="scss">
 @import "./assets/scss/font.scss";
-@import "./assets/scss/global.scss";
+// @import "./assets/scss/global.scss";
 
 #app {
   //   font-family: Avenir, Helvetica, Arial, sans-serif;

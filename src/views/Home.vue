@@ -39,13 +39,58 @@
     <!--  -->
     <section>
       <div class="container pt-6">
-        <div class="box has-background-info-light has-text-info ">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, cum.
+        <div class="box  has-background-info-light">
+          <div class="columns is-vcentered">
+            <div>
+              <svg
+                width="28px"
+                height="28px"
+                viewBox="0 0 28 28"
+                version="1.1"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                xmlns:sketch="http://www.bohemiancoding.com/sketch/ns"
+              >
+                <!-- Generator: Sketch Beta 3.3.2 (12041) - http://www.bohemiancoding.com/sketch -->
+                <title>alert</title>
+                <desc>Created with Sketch Beta.</desc>
+                <defs></defs>
+                <g
+                  id="Page-1"
+                  stroke="none"
+                  stroke-width="1"
+                  fill="green"
+                  fill-rule="evenodd"
+                  sketch:type="MSPage"
+                >
+                  <g
+                    id="Icon-Set-Filled"
+                    sketch:type="MSLayerGroup"
+                    transform="translate(-364.000000, -882.000000)"
+                    fill="#62BFED"
+                  >
+                    <path
+                      d="M388,900 L388,892 C388,886.478 383.522,882 378,882 C372.478,882 368,886.478 368,892 L368,900 L364,908 L375.184,908 C375.597,909.163 376.695,910 378,910 C379.305,910 380.403,909.163 380.816,908 L392,908 L388,900"
+                      id="alert"
+                      sketch:type="MSShapeGroup"
+                    ></path>
+                  </g>
+                </g>
+              </svg>
+            </div>
+            <span class="has-text-info pl-5">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Veniam, cum.
+            </span>
+          </div>
         </div>
-        <b-button type="is-primary " @click="handleCreateMessage()">{{
-          `send to database` | capitalize
-        }}</b-button>
-        <pre></pre>
+        <b-button type="is-primary " @click="handleCreateMessage()">
+          {{ `send to database` | capitalize }}
+        </b-button>
+        <pre>{{ firebaseData }}</pre>
+        <hr />
+        <div v-for="data of profiles" :key="data['.key']">
+          <p class="has-text-primary p-3">{{ data }}</p>
+        </div>
       </div>
       <b-loading :is-full-page="true" v-model="isLoading" :can-cancel="false"></b-loading>
     </section>
@@ -54,11 +99,13 @@
 
 <script>
 // @ is an alias to /src
-import * as firebase from "firebase/app";
+import * as fb from "firebase/app";
 import { v4 as uuidv4 } from "uuid";
-// import db from "../firebase";
+import { db, rdb } from "../firebase";
 
-// console.log("db", db.ref("Profile"));
+const realtimeDB = rdb.ref("Profile");
+
+// const documentPath = "Profile";
 
 export default {
   name: "Home",
@@ -66,9 +113,12 @@ export default {
   data() {
     return {
       isLoading: false,
-      //
       dummyProfilePicture:
-        "https://images.generated.photos/oYWpxSQdNj8tWOHcfcb07iwZyySSbF5wl5A1nxaSIxw/rs:fit:512:512/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzAxNzAxNDAuanBn.jpg"
+        "https://images.generated.photos/oYWpxSQdNj8tWOHcfcb07iwZyySSbF5wl5A1nxaSIxw/rs:fit:512:512/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzAxNzAxNDAuanBn.jpg",
+      //
+      arrData: [],
+      firebaseData: null,
+      profiles: []
     };
   },
   filters: {
@@ -76,7 +126,14 @@ export default {
       return value.toUpperCase();
     }
   },
-
+  firestore() {
+    return {
+      firebaseData: db.doc("Profile/test")
+    };
+  },
+  firebase: {
+    profiles: realtimeDB
+  },
   computed: {
     user_name() {
       return this.$store.getters["user/getUserName"];
@@ -88,25 +145,22 @@ export default {
       return this.$store.getters["user/getUserProfiles"];
     }
   },
+
   mounted() {},
   methods: {
     async handleLogIn() {
       this.isLoading = true;
-      const provider = new firebase.auth.GoogleAuthProvider();
-      const response = await firebase.auth().signInWithPopup(provider);
+      const provider = new fb.auth.GoogleAuthProvider();
+      const response = await fb.auth().signInWithPopup(provider);
       this.$store.dispatch("user/setUser", response);
       this.isLoading = false;
     },
     handleCreateMessage() {
       console.log("UUID :", uuidv4());
-
-      // await this.db.ref(`Profile/${uuidv4()}`).set({
-      //   createAt: Date.now(),
-      //   data: {
-      //     name: "Morris Heak",
-      //     age: 30
-      //   }
-      // });
+      realtimeDB.push({
+        name: "John",
+        createdAt: new Date()
+      });
     }
   }
 };
@@ -115,8 +169,8 @@ export default {
 <style lang="scss">
 .home {
   min-height: 100vh;
-  color: #fff;
   font-family: "Roboto", sans-serif;
+  color: #000000;
 
   .btn {
     &--login {
@@ -129,6 +183,9 @@ export default {
         letter-spacing: 1.5px;
       }
     }
+  }
+  .box {
+    padding: 2rem;
   }
 }
 </style>
