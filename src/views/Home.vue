@@ -83,9 +83,21 @@
             </span>
           </div>
         </div>
-        <b-button type="is-primary " @click="handleCreateMessage()">
-          {{ `send to database` | capitalize }}
-        </b-button>
+        <div>
+          <form class="columns control">
+            <div class="column is-5">
+              <b-field>
+                <b-input placeholder="Success" v-model="name" type="text" required></b-input>
+              </b-field>
+            </div>
+
+            <div class="column is-3">
+              <b-button type="is-primary " @click="handleCreateMessage()">
+                {{ `send to database` | capitalize }}
+              </b-button>
+            </div>
+          </form>
+        </div>
         <pre>{{ firebaseData }}</pre>
         <hr />
         <div v-for="data of profiles" :key="data['.key']">
@@ -117,6 +129,7 @@ export default {
         "https://images.generated.photos/oYWpxSQdNj8tWOHcfcb07iwZyySSbF5wl5A1nxaSIxw/rs:fit:512:512/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzAxNzAxNDAuanBn.jpg",
       //
       arrData: [],
+      name: "",
       firebaseData: null,
       profiles: []
     };
@@ -157,10 +170,15 @@ export default {
     },
     handleCreateMessage() {
       console.log("UUID :", uuidv4());
-      realtimeDB.push({
-        name: "John",
-        createdAt: new Date()
-      });
+      realtimeDB
+        .push({
+          name: this.name,
+          id: uuidv4(),
+          createdAt: new Date()
+        })
+        .then(() => {
+          this.name = "";
+        });
     }
   }
 };
