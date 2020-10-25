@@ -40,6 +40,7 @@ export default {
       fb.auth()
         .signOut()
         .then(() => {
+          this.$store.dispatch("user/clearUser");
           this.$store.dispatch("toast/success", `Log out successfully`);
           this.$router.replace({ name: "Home" });
         });

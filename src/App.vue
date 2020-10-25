@@ -12,7 +12,16 @@ export default {
   components: {
     Navbar: () => import("@/components/Navbar")
   },
-  mounted() {}
+  computed: {
+    checkUser() {
+      return this.$store.getters["user/getUser"];
+    }
+  },
+  mounted() {
+    if (!this.checkUser) {
+      this.$router.replace({ name: "Home" });
+    }
+  }
 };
 </script>
 

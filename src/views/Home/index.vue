@@ -9,7 +9,7 @@
           <div class="column is-4 form">
             <h1 class="title has-text-white has-text-centered ">Sign in</h1>
 
-            <b-field>
+            <b-field :message="valid.email.msg" :type="valid.email.type">
               <b-input v-model="email" placeholder="Email"></b-input>
             </b-field>
             <b-field>
@@ -21,7 +21,12 @@
               ></b-input>
             </b-field>
 
-            <b-button type="is-success" class="mt-5 is-uppercase has-text-weight-medium" expanded>
+            <b-button
+              type="is-success"
+              class="mt-5 is-uppercase has-text-weight-medium"
+              :disabled="validateInput"
+              expanded
+            >
               SIGN IN
             </b-button>
             <b-button
@@ -66,7 +71,11 @@ export default {
   name: "Home",
   data() {
     return {
+      // validateInput: false,
       isLoading: false,
+      valid: {
+        email: {}
+      },
       logoImg: "./../../assets/img/SitReadingDoodle.png",
       dummyProfilePicture:
         "https://images.generated.photos/oYWpxSQdNj8tWOHcfcb07iwZyySSbF5wl5A1nxaSIxw/rs:fit:512:512/Z3M6Ly9nZW5lcmF0/ZWQtcGhvdG9zL3Yz/XzAxNzAxNDAuanBn.jpg",
@@ -101,6 +110,27 @@ export default {
     },
     user_profile() {
       return this.$store.getters["user/getUserProfiles"];
+    },
+    validateEmail() {
+      return /\S+@\S+\.\S+/.test(this.email);
+    },
+    validatePassword() {
+      return this.password && this.password.length > 8;
+    },
+
+    validateInput() {
+      return !(this.validateEmail && this.validatePassword);
+    }
+  },
+  watch: {
+    validateEmail() {
+      if (this.validateEmail) {
+        this.valid.email.msg = "";
+        this.valid.email.type = "is-success";
+      } else {
+        this.valid.email.msg = "Please enter the email is format";
+        this.valid.email.type = "is-danger";
+      }
     }
   },
 
