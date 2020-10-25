@@ -16,7 +16,7 @@ const firebaseApp = firebase.initializeApp({
 })
 
 
-
+const auth = firebaseApp.auth()
 
 // Firestore Database
 const db = firebaseApp.firestore()
@@ -25,4 +25,4 @@ const db = firebaseApp.firestore()
 const rdb = firebaseApp.database()
 
 // eslint-disable-next-line import/prefer-default-export
-export { db, rdb }
+export { db, rdb, auth }
