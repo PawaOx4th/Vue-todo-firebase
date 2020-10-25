@@ -1,4 +1,5 @@
 @import "./assets/variables";
+@import "./assets/font.scss";
 
 *,
 h1,
@@ -9,4 +10,5 @@ h5,
 span,
 p {
   color: $color-white;
+  font-family: "IntroDemoCondLight" !important;
 }
